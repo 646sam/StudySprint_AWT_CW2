@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - StudySprint{% endblock %}
+
+{% block head %}
+    <!-- Custom CSS for home page -->
+    <style>
+        .task-column {
+            min-height: 200px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .task-card {
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: move; /* Cursor indicates that the element is draggable */
+            user-select: none; /* Prevent text selection */
+        }
+        .priority-1 { background-color: #ffcccc; } /* Red */
+        .priority-2 { background-color: #ffecb3; } /* Amber */
+        .priority-3 { background-color: #c8e6c9; } /* Green */
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- To Do Column -->
+        <div class="col">
+            <h3>To Do</h3>
+            <div id="to-do" class="task-column" ondrop="drop(event, 'To Do')" ondragover="allowDrop(event)">
+                {% for task in stages['To Do'] %}
+                    <div id="task-{{ task.id }}" class="task-card priority-{{ task.priority }}" draggable="true" ondragstart="drag(event)" onclick="location.href='{{ url_for('edit_task', task_id=task.id) }}'">
+                        <strong>{{ task.title }}</strong>
+                        <p>{{ task.description }}</p>
+                        <p>Priority: <span class="priority-{{ task.priority }}">{{ task.priority }}</span></p>
+                        <p>Deadline: {{ task.deadline_date.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Doing Column -->
+        <div class="col">
+            <h3>Doing</h3>
+            <div id="doing" class="task-column" ondrop="drop(event, 'Doing')" ondragover="allowDrop(event)">
+                {% for task in stages['Doing'] %}
+                    <div id="task-{{ task.id }}" class="task-card priority-{{ task.priority }}" draggable="true" ondragstart="drag(event)" onclick="location.href='{{ url_for('edit_task', task_id=task.id) }}'">
+                        <strong>{{ task.title }}</strong>
+                        <p>{{ task.description }}</p>
+                        <p>Priority: <span class="priority-{{ task.priority }}">{{ task.priority }}</span></p>
+                        <p>Deadline: {{ task.deadline_date.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Done Column -->
+        <div class="col">
+            <h3>Done</h3>
+            <div id="done" class="task-column" ondrop="drop(event, 'Done')" ondragover="allowDrop(event)">
+                {% for task in stages['Done'] %}
+                    <div id="task-{{ task.id }}" class="task-card priority-{{ task.priority }}" draggable="true" ondragstart="drag(event)" onclick="location.href='{{ url_for('edit_task', task_id=task.id) }}'">
+                        <strong>{{ task.title }}</strong>
+                        <p>{{ task.description }}</p>
+                        <p>Priority: <span class="priority-{{ task.priority }}">{{ task.priority }}</span></p>
+                        <p>Deadline: {{ task.deadline_date.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<a href="{{ url_for('add_task') }}" class="btn btn-success">Add Task</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev, stage) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var element = document.getElementById(data);
+
+        // Check if the target is a task column or a child of a task column
+        var targetColumn = ev.target.classList.contains('task-column') ? ev.target : ev.target.closest('.task-column');
+        
+        if (targetColumn) {
+            targetColumn.appendChild(element);
+
+            var taskId = data.split('-')[1];
+
+            // Send AJAX request to update the task stage
+            fetch('/update_task_stage/' + taskId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ stage: stage }),
+            });
+        }
+    }
+</script>
+{% endblock %}

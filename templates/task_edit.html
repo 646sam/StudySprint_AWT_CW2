@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Task - StudySprint{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Task</h2>
+    <form method="post" action="{{ url_for('edit_task', task_id=task_id) }}">
+        <div class="form-group">
+            <label for="title">Task Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ task.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required>{{ task.description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="priority">Priority</label>
+            <select class="form-control" id="priority" name="priority">
+                <option value="1" {% if task.priority == 1 %}selected{% endif %}>1 (High)</option>
+                <option value="2" {% if task.priority == 2 %}selected{% endif %}>2 (Medium)</option>
+                <option value="3" {% if task.priority == 3 %}selected{% endif %}>3 (Low)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input type="date" class="form-control" id="deadline" name="deadline" value="{{ task.deadline }}" required>
+        </div>
+        <div class="form-group">
+            <label for="stage">Stage</label>
+            <select class="form-control" id="stage" name="stage">
+                <option value="To Do" {% if task.stage == 'To Do' %}selected{% endif %}>To Do</option>
+                <option value="Doing" {% if task.stage == 'Doing' %}selected{% endif %}>Doing</option>
+                <option value="Done" {% if task.stage == 'Done' %}selected{% endif %}>Done</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Task</button>
+        <button type="submit" name="delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this task?');">Delete Task</button>
+    </form>
+</div>
+{% endblock %}

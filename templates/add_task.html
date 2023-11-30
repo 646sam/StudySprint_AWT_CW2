@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Task - StudySprint{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Add New Task</h2>
+    <form method="post" action="{{ url_for('add_task') }}">
+        <div class="form-group">
+            <label for="title">Task Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter task title" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Task description" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="priority">Priority</label>
+            <select class="form-control" id="priority" name="priority" required>
+                <option value="1">1 (High)</option>
+                <option value="2">2 (Medium)</option>
+                <option value="3">3 (Low)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input type="date" class="form-control" id="deadline" name="deadline" required>
+        </div>
+        <div class="form-group">
+            <label for="stage">Stage</label>
+            <select class="form-control" id="stage" name="stage" required>
+                <option value="To Do">To Do</option>
+                <option value="Doing">Doing</option>
+                <option value="Done">Done</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Task</button>
+    </form>
+</div>
+{% endblock %}
